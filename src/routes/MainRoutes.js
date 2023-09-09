@@ -17,6 +17,9 @@ const UtilsTablerIcons = Loadable(lazy(() => import('views/utilities/TablerIcons
 // sample page routing
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 
+// enve routing
+const Event = Loadable(lazy(() => import('views/event')));
+
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -84,6 +87,10 @@ const MainRoutes = {
     {
       path: 'sample-page',
       element: <SamplePage />
+    },
+    {
+      path: 'events',
+      element: <Event />
     }
   ]
 };
