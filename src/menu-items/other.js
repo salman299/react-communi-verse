@@ -26,6 +26,14 @@ const other = {
       icon: icons.IconHelp,
       external: true,
       target: true
+    },
+    {
+      id: 'events',
+      title: 'Events',
+      type: 'item',
+      url: '/events',
+      icon: icons.IconHelp,
+      breadcrumbs: false
     }
   ]
 };
