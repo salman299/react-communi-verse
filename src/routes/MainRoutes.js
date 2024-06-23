@@ -3,6 +3,7 @@ import { lazy } from 'react';
 // project imports
 import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
+import { PrivateRoute } from './routeGuards';
 
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
@@ -17,11 +18,15 @@ const UtilsTablerIcons = Loadable(lazy(() => import('views/utilities/TablerIcons
 // sample page routing
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 
-// ==============================|| MAIN ROUTING ||============================== //
+// Communities
+const AllCommunities = Loadable(lazy(() => import('views/communities')));
+const MyCommunities = Loadable(lazy(() => import('views/communities/myCommunities')));
 
+
+// ==============================|| MAIN ROUTING ||============================== //
 const MainRoutes = {
   path: '/',
-  element: <MainLayout />,
+  element: <PrivateRoute element={<MainLayout/>} />,
   children: [
     {
       path: '/',
@@ -78,6 +83,19 @@ const MainRoutes = {
         {
           path: 'material-icons',
           element: <UtilsMaterialIcons />
+        }
+      ]
+    },
+    {
+      path: 'communities',
+      children: [
+        {
+          path: '',
+          element: <AllCommunities />
+        },
+        {
+          path: 'my-communities',
+          element: <MyCommunities />
         }
       ]
     },
