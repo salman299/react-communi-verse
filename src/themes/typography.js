@@ -79,6 +79,9 @@ export default function themeTypography(theme) {
       '& > div > input': {
         padding: '30.5px 14px 11.5px !important'
       },
+      '& > div > .MuiSelect-select': {
+        padding: '30.5px 14px 11.5px !important'
+      },
       '& legend': {
         display: 'none'
       },
