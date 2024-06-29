@@ -20,21 +20,21 @@ import {
 // third party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
-import { useDispatch } from 'react-redux';
 
 // project imports
 import useScriptRef from 'hooks/useScriptRef';
 import AnimateButton from 'ui-component/extended/AnimateButton';
-import { login } from 'store/authSlice';
+import { useAuth } from 'hooks/useAuth';
+
 // assets
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-const FirebaseLogin = ({ ...others }) => {
+const AuthLogin = ({ ...others }) => {
   const theme = useTheme();
   const scriptedRef = useScriptRef();
   const [checked, setChecked] = useState(true);
-  const dispatch = useDispatch();
+  const { login } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => {
@@ -52,7 +52,7 @@ const FirebaseLogin = ({ ...others }) => {
         username: values.email,
         password: values.password
       };
-      const result = await dispatch(login(credentials));
+      const result = await login(credentials);
 
       if (result.error) {
         // Handle login error
@@ -171,4 +171,4 @@ const FirebaseLogin = ({ ...others }) => {
   );
 };
 
-export default FirebaseLogin;
+export default AuthLogin;

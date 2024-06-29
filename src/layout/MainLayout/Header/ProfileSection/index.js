@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 
 import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { useAuth } from 'hooks/useAuth';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -28,7 +29,6 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import MainCard from 'ui-component/cards/MainCard';
 import Transitions from 'ui-component/extended/Transitions';
 import User1 from 'assets/images/users/user-round.svg';
-import { logout } from 'store/authSlice';
 
 // assets
 import { IconLogout, IconSettings, IconUser } from '@tabler/icons';
@@ -36,20 +36,18 @@ import { IconLogout, IconSettings, IconUser } from '@tabler/icons';
 // ==============================|| PROFILE MENU ||============================== //
 
 const ProfileSection = () => {
+  const { logout } = useAuth();
   const theme = useTheme();
   const customization = useSelector((state) => state.customization);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [open, setOpen] = useState(false);
-  /**
-   * anchorRef is used on different componets and specifying one type leads to other components throwing an error
-   * */
+
   const anchorRef = useRef(null);
+
   const handleLogout = async () => {
-    console.log('Logout');
-    dispatch(logout());
+    logout();
   };
 
   const handleClose = (event) => {

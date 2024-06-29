@@ -1,12 +1,12 @@
 import { Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useAuth } from 'hooks/useAuth';
 
 export const PrivateRoute = ({ element }) => {
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  return isAuthenticated ? element : <Navigate to="/pages/login/login3" />;
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? element : <Navigate to="/login/" />;
 };
 
 export const PublicRoute = ({ element }) => {
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const { isAuthenticated } = useAuth();
   return !isAuthenticated ? element : <Navigate to="/" />;
 };
