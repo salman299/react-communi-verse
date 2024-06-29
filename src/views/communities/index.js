@@ -1,56 +1,58 @@
-// material-ui
-import { Grid, Container } from '@mui/material';
-import { gridSpacing } from 'store/constant';
-
-import EventCard from './EventCard';
+import React, { useState, useEffect } from 'react';
+import { Grid, Container, LinearProgress, FormHelperText } from '@mui/material';
+import CommunityCard from './components/CommunityCard';
 import SubHeader from 'layout/MainLayout/SubHeader';
+import AuthenticatedAPIClient from 'services/api';
+import { Box } from '@mui/system';
 
-// ==============================|| SAMPLE PAGE ||============================== //
+const AllCommunities = () => {
+  const [communities, setCommunities] = useState([]);
+  const [loading, setLoading] = useState([]);
+  const [error, setError] = useState([]);
 
-const AllCommunities = () => (
-  <>
-    <SubHeader title="Communities"></SubHeader>
-    <Container sx={{ padding: '20px' }}>
-      <Grid container spacing={gridSpacing}>
-        <Grid item xs={12} sm={6} md={4}>
-          <EventCard
-            title="Treasure Hunt"
-            date="16-09-2023"
-            organizer="Mubarak Scout"
-            lead="Ali Salman Nawaz"
-            description="Corem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Corem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis."
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <EventCard
-            title="Treasure Hunt"
-            date="16-09-2023"
-            organizer="Mubarak Scout"
-            lead="Ali Salman Nawaz"
-            description="Corem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Corem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis."
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <EventCard
-            title="Treasure Hunt"
-            date="16-09-2023"
-            organizer="Mubarak Scout"
-            lead="Ali Salman Nawaz"
-            description="Corem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Corem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis."
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <EventCard
-            title="Treasure Hunt"
-            date="16-09-2023"
-            organizer="Mubarak Scout"
-            lead="Ali Salman Nawaz"
-            description="Corem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Corem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis."
-          />
-        </Grid>
-      </Grid>
-    </Container>
-  </>
-);
+  useEffect(() => {
+    fetchCommunities();
+  }, []);
+
+  const fetchCommunities = async () => {
+    try {
+      setLoading(true);
+      const response = await AuthenticatedAPIClient.get('/api/v1/communities/public/');
+      setCommunities(response.data);
+      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching communities:', err);
+      setError('Failed to fetch communities. Please try again.');
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <SubHeader title="Communities" />
+      {loading && <LinearProgress value={80} />}
+      {!loading && (
+        <Container sx={{ margin: '0px', maxWidth: '2000px !important' }}>
+          <Grid container spacing={3}>
+            {communities.map((community) => (
+              <Grid item key={community.slug} xs={12} sm={6} md={4}>
+                <CommunityCard
+                  title={community.name}
+                  area={`${community.area_details.name}, ${community.area_details.city}`}
+                  description={community.description}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      )}
+      {error && (
+        <Box sx={{ mt: 3 }}>
+          <FormHelperText error>{error}</FormHelperText>
+        </Box>
+      )}
+    </>
+  );
+};
 
 export default AllCommunities;

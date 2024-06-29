@@ -1,9 +1,8 @@
 // assets
-import { IconKey } from '@tabler/icons';
-
+import { IconAffiliate } from '@tabler/icons';
 // constant
 const icons = {
-  IconKey
+  IconAffiliate
 };
 
 // ==============================|| EXTRA PAGES MENU ITEMS ||============================== //
@@ -17,7 +16,7 @@ const communities = {
       id: 'communities',
       title: 'Communities',
       type: 'collapse',
-      icon: icons.IconKey,
+      icon: icons.IconAffiliate,
       children: [
         {
           id: 'communities',

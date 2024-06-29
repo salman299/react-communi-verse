@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
-import { register } from 'store/authSlice';
+import { useAuth } from 'hooks/useAuth';
 import { useTheme } from '@mui/material/styles';
 import {
   Box,
@@ -27,10 +26,10 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 
-const FirebaseRegister = ({ ...others }) => {
+const AuthRegister = ({ ...others }) => {
   const theme = useTheme();
   const scriptedRef = useScriptRef();
-  const dispatch = useDispatch();
+  const { register } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [strength, setStrength] = useState(0);
   const [level, setLevel] = useState();
@@ -71,7 +70,7 @@ const FirebaseRegister = ({ ...others }) => {
         area: values.area
       };
 
-      const result = await dispatch(register(userData));
+      const result = await register(userData);
 
       if (!result.error) {
         setSuccessMessage('Account created successfully. We have sent an email to your account for email verification.');
@@ -334,4 +333,4 @@ const FirebaseRegister = ({ ...others }) => {
   );
 };
 
-export default FirebaseRegister;
+export default AuthRegister;
