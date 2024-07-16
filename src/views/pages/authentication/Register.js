@@ -7,7 +7,7 @@ import { Divider, Grid, Stack, Typography, useMediaQuery } from '@mui/material';
 // project imports
 import AuthWrapper from './components/AuthWrapper';
 import AuthCardWrapper from './components/AuthCardWrapper';
-import Logo from 'ui-component/Logo';
+import AuthLogo from 'ui-component/AuthLogo';
 import AuthRegister from './auth-forms/AuthRegister';
 import AuthFooter from 'ui-component/cards/AuthFooter';
 
@@ -27,9 +27,9 @@ const Register = () => {
             <Grid item sx={{ m: { xs: 1, sm: 3 }, mb: 0 }}>
               <AuthCardWrapper>
                 <Grid container spacing={2} alignItems="center" justifyContent="center">
-                  <Grid item sx={{ mb: 3 }}>
+                  <Grid item sx={{ mb: 1 }}>
                     <Link to="#">
-                      <Logo />
+                      <AuthLogo />
                     </Link>
                   </Grid>
                   <Grid item xs={12}>
