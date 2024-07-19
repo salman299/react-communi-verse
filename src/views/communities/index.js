@@ -4,7 +4,8 @@ import CommunityCard from './components/CommunityCard';
 import SubHeader from 'layout/MainLayout/SubHeader';
 import AuthenticatedAPIClient from 'services/api';
 import { Box } from '@mui/system';
-
+import image from 'assets/images/comunity_image/sunset.jpg';
+import logo from 'assets/images/comunity_image/comuniverse.png';
 const AllCommunities = () => {
   const [communities, setCommunities] = useState([]);
   const [loading, setLoading] = useState([]);
@@ -37,6 +38,9 @@ const AllCommunities = () => {
             {communities.map((community) => (
               <Grid item key={community.slug} xs={12} sm={6} md={4}>
                 <CommunityCard
+                  logoUrl={logo}
+                  imageUrl={image}
+                  imageText="Agha Khan Youth and Sports Board"
                   title={community.name}
                   area={`${community.area_details.name}, ${community.area_details.city}`}
                   description={community.description}
