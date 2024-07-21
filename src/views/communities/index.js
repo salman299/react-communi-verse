@@ -4,6 +4,7 @@ import CommunityCard from './components/CommunityCard';
 import SubHeader from 'layout/MainLayout/SubHeader';
 import AuthenticatedAPIClient from 'services/api';
 import { Box } from '@mui/system';
+import AddCommunityDialog from './components/AddCommunityDialog';
 
 const AllCommunities = () => {
   const [communities, setCommunities] = useState([]);
@@ -29,7 +30,10 @@ const AllCommunities = () => {
 
   return (
     <>
+      <Box sx={{display:"flex", alignItems:"center", justifyContent:"space-between"}}>
       <SubHeader title="Communities" />
+      <AddCommunityDialog/>
+      </Box>
       {loading && <LinearProgress value={80} />}
       {!loading && (
         <Container sx={{ margin: '0px', maxWidth: '2000px !important' }}>
