@@ -7,10 +7,12 @@ import { Box } from '@mui/system';
 import image from 'assets/images/comunity_image/sunset.jpg';
 import logo from 'assets/images/comunity_image/logo.svg';
 import CommunityCard from 'views/communities/components/CommunityCard';
+import { gridSpacing } from 'store/constant';
+
 const AllCommunities = () => {
   const [communities, setCommunities] = useState([]);
-  const [loading, setLoading] = useState([]);
-  const [error, setError] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchCommunities();
@@ -31,17 +33,16 @@ const AllCommunities = () => {
 
   return (
     <>
-      <SubHeader title="Communities" />
+      <SubHeader title="Dashboard" />
       {loading && <LinearProgress value={80} />}
       {!loading && (
-        <Container sx={{ margin: '0px', maxWidth: '2000px !important' }}>
-          <Grid container spacing={3}>
+        <Container sx={{ padding: '20px' }}>
+          <Grid container spacing={gridSpacing}>
             {communities.map((community) => (
               <Grid item key={community.slug} xs={12} sm={6} md={4}>
                 <CommunityCard
                   logoUrl={logo}
                   imageUrl={image}
-                  imageText="Agha Khan Youth and Sports Board"
                   title={community.name}
                   area={`${community.area_details.name}, ${community.area_details.city}`}
                   description={community.description}

@@ -9,6 +9,7 @@ import image from 'assets/images/comunity_image/sunset.jpg';
 import React, { useState, useEffect } from 'react';
 import { Box } from '@mui/system';
 import AuthenticatedAPIClient from 'services/api';
+import { gridSpacing } from 'store/constant';
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const MyCommunities = () => {
@@ -36,14 +37,13 @@ const MyCommunities = () => {
       <SubHeader title="Communities" />
       {loading && <LinearProgress value={80} />}
       {!loading && (
-        <Container sx={{ margin: '0px', maxWidth: '2000px !important' }}>
-          <Grid container spacing={3}>
+        <Container sx={{ padding: '20px' }}>
+          <Grid container spacing={gridSpacing}>
             {communities.map((community) => (
               <Grid item key={community.slug} xs={12} sm={6} md={4}>
                 <CommunityCard
                   logoUrl={logo}
                   imageUrl={image}
-                  imageText="Agha Khan Youth and Sports Board"
                   title={community.name}
                   area={`${community.area_details.name}, ${community.area_details.city}`}
                   description={community.description}
