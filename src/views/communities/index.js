@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Container, LinearProgress, FormHelperText } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import { Grid, Container, LinearProgress, FormHelperText, Divider } from '@mui/material';
 import CommunityCard from './components/CommunityCard';
 import SubHeader from 'layout/MainLayout/SubHeader';
 import AuthenticatedAPIClient from 'services/api';
 import { Box } from '@mui/system';
 import image from 'assets/images/comunity_image/sunset.jpg';
-import logo from 'assets/images/comunity_image/comuniverse.png';
+import { gridSpacing } from 'store/constant';
+
 const AllCommunities = () => {
+  const theme = useTheme();
   const [communities, setCommunities] = useState([]);
   const [loading, setLoading] = useState([]);
   const [error, setError] = useState([]);
@@ -18,8 +21,8 @@ const AllCommunities = () => {
   const fetchCommunities = async () => {
     try {
       setLoading(true);
-      const response = await AuthenticatedAPIClient.get('/api/v1/communities/public/');
-      setCommunities(response.data);
+      const response = await AuthenticatedAPIClient.get('/api/v1/public/communities');
+      setCommunities(response.data.results);
       setLoading(false);
     } catch (err) {
       console.error('Error fetching communities:', err);
@@ -30,26 +33,28 @@ const AllCommunities = () => {
 
   return (
     <>
-      <SubHeader title="Communities" />
-      {loading && <LinearProgress value={80} />}
-      {!loading && (
-        <Container sx={{ margin: '0px', maxWidth: '2000px !important' }}>
-          <Grid container spacing={3}>
+      <Container>
+        <SubHeader title="Communities" />
+        <Divider sx={{ borderColor: theme.palette.grey[400], mb: gridSpacing }} />
+        {loading && <LinearProgress value={80} />}
+        {!loading && (
+          <Grid container spacing={gridSpacing}>
             {communities.map((community) => (
               <Grid item key={community.slug} xs={12} sm={6} md={4}>
                 <CommunityCard
-                  logoUrl={logo}
-                  imageUrl={image}
-                  imageText="Agha Khan Youth and Sports Board"
+                  logoUrl={community.logo}
+                  imageUrl={community.cover_image ?? image}
                   title={community.name}
-                  area={`${community.area_details.name}, ${community.area_details.city}`}
+                  area={community.area_name}
                   description={community.description}
+                  color={community.color ?? '#ffffff'}
+                  is_member={community.is_member}
                 />
               </Grid>
             ))}
           </Grid>
-        </Container>
-      )}
+        )}
+      </Container>
       {error && (
         <Box sx={{ mt: 3 }}>
           <FormHelperText error>{error}</FormHelperText>

@@ -39,7 +39,7 @@ const BajajAreaChartCard = () => {
           <Grid container alignItems="center" justifyContent="space-between">
             <Grid item>
               <Typography variant="subtitle1" sx={{ color: theme.palette.secondary.dark }}>
-                Bajaj
+                Bajaj Finery
               </Typography>
             </Grid>
             <Grid item>

@@ -1,38 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Card, CardContent, Typography, Box, Button, Avatar } from '@mui/material';
+import { Card, CardContent, Typography, Box, Button } from '@mui/material';
+import ImageAvatar from './ImageAvatar';
 
-const getRandomColor = () => {
-  const letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-};
-
-const CommunityCard = ({ title, description, imageUrl, logoUrl, area }) => {
-  const randomColor = getRandomColor();
+const CommunityCard = ({ title, description, imageUrl, logoUrl, area, color, is_member }) => {
   return (
-    <Card sx={{ borderRadius: 3, overflow: 'hidden', height: '100%' }}>
-      <Box sx={{ backgroundColor: randomColor, position: 'relative', pb: 0 }}>
-        {imageUrl ? (
-          <img src={imageUrl} alt="Event" style={{ width: '100%', height: 'auto', opacity: 0.6 }} />
-        ) : (
-          <Avatar
-            sx={{
-              width: '100%',
-              height: { xs: 150, sm: 200 },
-              fontSize: { xs: '50px', sm: '80px' },
-              backgroundColor: randomColor,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            {title.charAt(0)}
-          </Avatar>
-        )}
+    <Card sx={{ overflow: 'hidden', height: '100%' }}>
+      <Box sx={{ backgroundColor: color, position: 'relative', pb: 0 }}>
+        <img src={imageUrl} alt="Event" style={{ width: '100%', opacity: 0.6, height: '120px' }} />
         <Typography
           variant="h4"
           component="div"
@@ -55,20 +30,7 @@ const CommunityCard = ({ title, description, imageUrl, logoUrl, area }) => {
         >
           {title}
         </Typography>
-        <Box
-          component="img"
-          src={logoUrl}
-          alt="Logo"
-          sx={{
-            position: 'absolute',
-            bottom: -30,
-            right: 16,
-            width: { xs: 40, sm: 60 },
-            height: { xs: 40, sm: 60 },
-            borderRadius: '50%',
-            border: '2px solid white'
-          }}
-        />
+        <ImageAvatar imageUrl={logoUrl} title={title} />
       </Box>
 
       <CardContent>
@@ -93,7 +55,8 @@ const CommunityCard = ({ title, description, imageUrl, logoUrl, area }) => {
           {description}
         </Typography>
         <Box textAlign="right">
-          <Button variant="contained">Join Now</Button>
+          {!is_member && <Button variant="contained">Join Now</Button>}
+          {is_member && <Button variant="outlined">View</Button>}
         </Box>
       </CardContent>
     </Card>
@@ -104,8 +67,10 @@ CommunityCard.propTypes = {
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   imageUrl: PropTypes.string,
-  logoUrl: PropTypes.string.isRequired,
-  area: PropTypes.string.isRequired
+  logoUrl: PropTypes.string,
+  area: PropTypes.string.isRequired,
+  color: PropTypes.string.isRequired,
+  is_member: PropTypes.bool.isRequired
 };
 
 export default CommunityCard;

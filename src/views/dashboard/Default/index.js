@@ -1,64 +1,59 @@
-import React, { useState, useEffect } from 'react';
-import { Grid, Container, LinearProgress, FormHelperText } from '@mui/material';
+import { useEffect, useState } from 'react';
 
-import SubHeader from 'layout/MainLayout/SubHeader';
-import AuthenticatedAPIClient from 'services/api';
-import { Box } from '@mui/system';
-import image from 'assets/images/comunity_image/sunset.jpg';
-import logo from 'assets/images/comunity_image/logo.svg';
-import CommunityCard from 'views/communities/components/CommunityCard';
+// material-ui
+import { Grid } from '@mui/material';
+
+// project imports
+import EarningCard from './EarningCard';
+import PopularCard from './PopularCard';
+import TotalOrderLineChartCard from './TotalOrderLineChartCard';
+import TotalIncomeDarkCard from './TotalIncomeDarkCard';
+import TotalIncomeLightCard from './TotalIncomeLightCard';
+import TotalGrowthBarChart from './TotalGrowthBarChart';
 import { gridSpacing } from 'store/constant';
 
-const AllCommunities = () => {
-  const [communities, setCommunities] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+// ==============================|| DEFAULT DASHBOARD ||============================== //
 
+const Dashboard = () => {
+  const [isLoading, setLoading] = useState(true);
   useEffect(() => {
-    fetchCommunities();
+    setLoading(false);
   }, []);
 
-  const fetchCommunities = async () => {
-    try {
-      setLoading(true);
-      const response = await AuthenticatedAPIClient.get('/api/v1/communities/public/');
-      setCommunities(response.data);
-      setLoading(false);
-    } catch (err) {
-      console.error('Error fetching communities:', err);
-      setError('Failed to fetch communities. Please try again.');
-      setLoading(false);
-    }
-  };
-
   return (
-    <>
-      <SubHeader title="Dashboard" />
-      {loading && <LinearProgress value={80} />}
-      {!loading && (
-        <Container sx={{ padding: '20px' }}>
-          <Grid container spacing={gridSpacing}>
-            {communities.map((community) => (
-              <Grid item key={community.slug} xs={12} sm={6} md={4}>
-                <CommunityCard
-                  logoUrl={logo}
-                  imageUrl={image}
-                  title={community.name}
-                  area={`${community.area_details.name}, ${community.area_details.city}`}
-                  description={community.description}
-                />
-              </Grid>
-            ))}
+    <Grid container spacing={gridSpacing}>
+      <Grid item xs={12}>
+        <Grid container spacing={gridSpacing}>
+          <Grid item lg={4} md={6} sm={6} xs={12}>
+            <EarningCard isLoading={isLoading} />
           </Grid>
-        </Container>
-      )}
-      {error && (
-        <Box sx={{ mt: 3 }}>
-          <FormHelperText error>{error}</FormHelperText>
-        </Box>
-      )}
-    </>
+          <Grid item lg={4} md={6} sm={6} xs={12}>
+            <TotalOrderLineChartCard isLoading={isLoading} />
+          </Grid>
+          <Grid item lg={4} md={12} sm={12} xs={12}>
+            <Grid container spacing={gridSpacing}>
+              <Grid item sm={6} xs={12} md={6} lg={12}>
+                <TotalIncomeDarkCard isLoading={isLoading} />
+              </Grid>
+              <Grid item sm={6} xs={12} md={6} lg={12}>
+                <TotalIncomeLightCard isLoading={isLoading} />
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+      <Grid item xs={12}>
+        <Grid container spacing={gridSpacing}>
+          <Grid item xs={12} md={8}>
+            <TotalGrowthBarChart isLoading={isLoading} />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <PopularCard isLoading={isLoading} />
+          </Grid>
+        </Grid>
+      </Grid>
+    </Grid>
   );
 };
 
-export default AllCommunities;
+export default Dashboard;
