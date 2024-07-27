@@ -5,7 +5,7 @@ import CommunityCard from './components/CommunityCard';
 import SubHeader from 'layout/MainLayout/SubHeader';
 import AuthenticatedAPIClient from 'services/api';
 import { Box } from '@mui/system';
-import image from 'assets/images/comunity_image/sunset.jpg';
+import image from 'assets/images/comunity_image/community.jpg';
 import { gridSpacing } from 'store/constant';
 
 const AllCommunities = () => {
