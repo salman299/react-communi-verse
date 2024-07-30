@@ -1,4 +1,5 @@
 import { Typography } from '@mui/material';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 
 // material-ui
@@ -9,20 +10,23 @@ import { Box } from '@mui/material';
 
 const SubHeader = ({ title }) => {
   const theme = useTheme();
+  const customization = useSelector((state) => state.customization);
 
   return (
     <>
       <Box
         sx={{
-          width: 228,
           display: 'flex',
           [theme.breakpoints.down('md')]: {
             width: 'auto'
           },
-          padding: '16px 8px'
+          backgroundColor: theme.palette.background.paper,
+          padding: '12px',
+          mb: '20px',
+          borderRadius: `${customization.borderRadius}px`
         }}
       >
-        <Typography variant="h2" component="h2">
+        <Typography variant="h5" fontSize="1.125rem">
           {title}
         </Typography>
       </Box>
