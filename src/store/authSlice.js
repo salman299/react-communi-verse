@@ -12,7 +12,20 @@ export const login = createAsyncThunk('auth/login', async (credentials, { reject
     const formData = new FormData();
     Object.keys(data).forEach((key) => formData.append(key, data[key]));
     const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/v1/token/`, formData);
-    console.log(response);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(error.response.data);
+  }
+});
+
+export const refreshToken = createAsyncThunk('auth/refreshToken', async (_, { getState, rejectWithValue }) => {
+  try {
+    const { refreshToken } = getState().auth;
+    const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/v1/token/`, {
+      refresh_token: refreshToken,
+      client_id: 'public',
+      grant_type: 'refresh_token'
+    });
     return response.data;
   } catch (error) {
     return rejectWithValue(error.response.data);
@@ -35,7 +48,8 @@ const authSlice = createSlice({
     refreshToken: null,
     isLoading: false,
     error: null,
-    isAuthenticated: false
+    isAuthenticated: false,
+    expiresIn: null
     // user: null,
   },
   reducers: {
@@ -55,6 +69,7 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.accessToken = action.payload.access_token;
         state.refreshToken = action.payload.refresh_token;
+        state.expiresIn = Date.now() + action.payload.expires_in * 1000;
         state.isAuthenticated = true;
       })
       .addCase(login.rejected, (state, action) => {
@@ -69,6 +84,17 @@ const authSlice = createSlice({
       .addCase(register.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+      })
+      .addCase(refreshToken.fulfilled, (state, action) => {
+        state.accessToken = action.payload.access_token;
+        state.refreshToken = action.payload.refresh_token;
+        state.expiresIn = Date.now() + action.payload.expires_in * 1000;
+        state.isAuthenticated = true;
+      })
+      .addCase(refreshToken.rejected, (state) => {
+        state.accessToken = null;
+        state.refreshToken = null;
+        state.isAuthenticated = false;
       });
   }
 });
