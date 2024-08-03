@@ -20,7 +20,7 @@ const communities = {
       children: [
         {
           id: 'communities',
-          title: 'Dashboard',
+          title: 'Explore',
           type: 'item',
           url: '/communities/',
           breadcrumbs: false
@@ -30,6 +30,13 @@ const communities = {
           title: 'My Communities',
           type: 'item',
           url: '/communities/my-communities',
+          breadcrumbs: false
+        },
+        {
+          id: 'manage-communities',
+          title: 'Manage Communities',
+          type: 'item',
+          url: '/communities/manage-communities',
           breadcrumbs: false
         }
       ]

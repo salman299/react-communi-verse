@@ -19,6 +19,7 @@ const UtilsTablerIcons = Loadable(lazy(() => import('views/utilities/TablerIcons
 // Communities
 const AllCommunities = Loadable(lazy(() => import('views/communities')));
 const MyCommunities = Loadable(lazy(() => import('views/communities/myCommunities')));
+const ManageCommunities = Loadable(lazy(() => import('views/communities/manageCommunities')));
 
 // Activities
 const Events = Loadable(lazy(() => import('views/events')));
@@ -97,6 +98,10 @@ const MainRoutes = {
         {
           path: 'my-communities',
           element: <MyCommunities />
+        },
+        {
+          path: 'manage-communities',
+          element: <ManageCommunities />
         }
       ]
     },
