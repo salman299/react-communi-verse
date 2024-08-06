@@ -7,6 +7,7 @@ import tokenMiddleware from './tokenMiddleware';
 import areaCitySlice from './areaCitySlice';
 import snackbarReducer from './snackbarSlice';
 import { initializeApp } from './appInitialization';
+import userSlice from './userSlice';
 
 const persistConfig = {
   key: 'auth',
@@ -22,6 +23,7 @@ const store = configureStore({
     auth: authPersistedReducer,
     snackbar: snackbarReducer,
     areaCity: areaCitySlice
+    user: userSlice
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

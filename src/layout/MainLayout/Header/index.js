@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import { Avatar, Box, ButtonBase } from '@mui/material';
+//import { Provider } from 'react-redux';
+//import store from '../../../store/index';
 
 // project imports
 import LogoSection from '../LogoSection';
@@ -61,7 +63,9 @@ const Header = ({ handleLeftDrawerToggle }) => {
       <Box sx={{ flexGrow: 1 }} />
 
       {/* notification & profile */}
+     
       <NotificationSection />
+     
       <ProfileSection />
     </>
   );

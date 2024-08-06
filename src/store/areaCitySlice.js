@@ -9,7 +9,9 @@ export const fetchAreas = createAsyncThunk('areaCity/fetchAreas', async (_, { ge
     const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/v1/areas/`, {
       headers: {
         Authorization: `Bearer ${accessToken}`
-      }
+      } 
+
+      
     });
     return response.data;
   } catch (error) {

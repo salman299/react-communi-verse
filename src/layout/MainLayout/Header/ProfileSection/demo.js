@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from 'hooks/useAuth';
 import { useTheme } from '@mui/material/styles';
@@ -8,7 +8,7 @@ import {
   Box,
   Chip,
   ClickAwayListener,
-  //Grid,
+  Grid,
   List,
   ListItemButton,
   ListItemIcon,
@@ -22,22 +22,25 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import MainCard from 'ui-component/cards/MainCard';
 import Transitions from 'ui-component/extended/Transitions';
 import User1 from 'assets/images/users/user-round.svg';
-import { IconLogout, IconSettings } from '@tabler/icons';
+import { fetchUserInfo } from '../../../../store/userSlice';
+import { IconLogout, IconSettings, IconUser } from '@tabler/icons';
 
 const ProfileSection = () => {
   const { logout } = useAuth();
   const theme = useTheme();
   const customization = useSelector((state) => state.customization || { borderRadius: 8 });
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [open, setOpen] = useState(false);
-  const {username} = useSelector((state) => state.user.user || "User");
-  const {full_name} = useSelector((state) => state.user.user);
-  const {avatar} = useSelector((state)=> state.user.user || User1)
+
   const anchorRef = useRef(null);
+  
+  const { userInfo = {}, status, error } = useSelector((state) => state.user || {});
 
-  //console.log(useSelector((state) => state.user))
-
+  useEffect(() => {
+    dispatch(fetchUserInfo());
+  }, [dispatch]);
 
   const handleLogout = async () => {
     logout();
@@ -72,7 +75,16 @@ const ProfileSection = () => {
     prevOpen.current = open;
   }, [open]);
 
+  if (status === 'loading') {
+    return <div>Loading...</div>;
+  }
+
+  if (status === 'failed') {
+    return <div>Error: {error}</div>;
+  }
+
   return (
+    
     <>
       <Chip
         sx={{
@@ -96,7 +108,7 @@ const ProfileSection = () => {
         }}
         icon={
           <Avatar
-            src={avatar}
+            src={User1}
             sx={{
               ...theme.typography.mediumAvatar,
               margin: '8px 0 8px 8px !important',
@@ -142,12 +154,12 @@ const ProfileSection = () => {
                   <Box sx={{ p: 2, pb: 0 }}>
                     <Stack>
                       <Stack direction="row" spacing={0.5} alignItems="center">
-                        <Typography variant="h4">Hello,</Typography>
+                        <Typography variant="h4">Good Morning,</Typography>
                         <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                          {username}
+                          {userInfo || 'User'}
                         </Typography>
                       </Stack>
-                      <Typography variant="subtitle2">{full_name|| "Project Admin"}</Typography>
+                      <Typography variant="subtitle2">Project Admin</Typography>
                     </Stack>
                   </Box>
                   <PerfectScrollbar style={{ height: '100%', maxHeight: 'calc(100vh - 250px)', overflowX: 'hidden' }}>
@@ -177,6 +189,34 @@ const ProfileSection = () => {
                             <IconSettings stroke={1.5} size="1.3rem" />
                           </ListItemIcon>
                           <ListItemText primary={<Typography variant="body2">Account Settings</Typography>} />
+                        </ListItemButton>
+                        <ListItemButton
+                          sx={{ borderRadius: `${customization.borderRadius}px` }}
+                          selected={selectedIndex === 1}
+                          onClick={(event) => handleListItemClick(event, 1, '#')}
+                        >
+                          <ListItemIcon>
+                            <IconUser stroke={1.5} size="1.3rem" />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={
+                              <Grid container spacing={1} justifyContent="space-between">
+                                <Grid item>
+                                  <Typography variant="body2">Social Profile</Typography>
+                                </Grid>
+                                <Grid item>
+                                  <Chip
+                                    label="02"
+                                    size="small"
+                                    sx={{
+                                      bgcolor: theme.palette.warning.dark,
+                                      color: theme.palette.background.default
+                                    }}
+                                  />
+                                </Grid>
+                              </Grid>
+                            }
+                          />
                         </ListItemButton>
                         <ListItemButton
                           sx={{ borderRadius: `${customization.borderRadius}px` }}
