@@ -49,7 +49,8 @@ const authSlice = createSlice({
     isLoading: false,
     error: null,
     isAuthenticated: false,
-    expiresIn: null
+    expiresIn: null,
+    isRefreshing: false
     // user: null,
   },
   reducers: {
@@ -85,16 +86,21 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload;
       })
+      .addCase(refreshToken.pending, (state) => {
+        state.isRefreshing = true;
+      })
       .addCase(refreshToken.fulfilled, (state, action) => {
         state.accessToken = action.payload.access_token;
         state.refreshToken = action.payload.refresh_token;
         state.expiresIn = Date.now() + action.payload.expires_in * 1000;
         state.isAuthenticated = true;
+        state.isRefreshing = false;
       })
       .addCase(refreshToken.rejected, (state) => {
         state.accessToken = null;
         state.refreshToken = null;
         state.isAuthenticated = false;
+        state.isRefreshing = false;
       });
   }
 });

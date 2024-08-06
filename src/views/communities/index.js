@@ -21,7 +21,7 @@ const AllCommunities = () => {
   const fetchCommunities = async () => {
     try {
       setLoading(true);
-      const response = await AuthenticatedAPIClient.get('/api/v1/public/communities');
+      const response = await AuthenticatedAPIClient.get('/api/v1/public/communities/');
       setCommunities(response.data.results);
       setLoading(false);
     } catch (err) {

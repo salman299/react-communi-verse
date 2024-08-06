@@ -4,6 +4,8 @@ import customizationReducer from './customizationReducer';
 import storage from 'redux-persist/lib/storage';
 import authReducer from './authSlice';
 import tokenMiddleware from './tokenMiddleware';
+import areaCitySlice from './areaCitySlice';
+import { initializeApp } from './appInitialization';
 
 const persistConfig = {
   key: 'auth',
@@ -16,7 +18,8 @@ const authPersistedReducer = persistReducer(persistConfig, authReducer);
 const store = configureStore({
   reducer: {
     customization: customizationReducer,
-    auth: authPersistedReducer
+    auth: authPersistedReducer,
+    areaCity: areaCitySlice
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -27,5 +30,6 @@ const store = configureStore({
 });
 
 const persistor = persistStore(store);
+store.dispatch(initializeApp());
 
 export { store, persistor };
