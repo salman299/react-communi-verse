@@ -23,7 +23,7 @@ import {
 import { Visibility, Edit, Delete } from '@mui/icons-material';
 import SubHeader from 'layout/MainLayout/SubHeader';
 import AuthenticatedAPIClient from 'services/api';
-import AddCommunity from './components/AddCommunity';
+import AddCommunityDialog from './components/AddCommunityDialog';
 import { gridSpacing } from 'store/constant';
 import { useSelector } from 'react-redux';
 
@@ -37,15 +37,15 @@ const ManageCommunities = () => {
   const [totalCommunities, setTotalCommunities] = useState(0);
   const [search, setSearch] = useState('');
   const [filterArea, setFilterArea] = useState('');
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { areas } = useSelector((state) => state.areaCity);
-  console.log(areas);
-  const handleDrawerOpen = () => {
-    setIsDrawerOpen(true);
+  
+  const handleDialogOpen = () => {
+    setIsDialogOpen(true);
   };
 
-  const handleDrawerClose = () => {
-    setIsDrawerOpen(false);
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
   };
 
   const fetchCommunities = useCallback(async () => {
@@ -136,7 +136,7 @@ const ManageCommunities = () => {
               ))}
             </TextField>
           </Box>
-          <Button variant="contained" color="primary" onClick={handleDrawerOpen}>
+          <Button variant="contained" color="primary" onClick={handleDialogOpen}>
             Add Community
           </Button>
         </Box>
@@ -201,7 +201,7 @@ const ManageCommunities = () => {
           </>
         )}
       </Container>
-      <AddCommunity open={isDrawerOpen} onClose={handleDrawerClose} fetchCommunities={fetchCommunities} />
+      <AddCommunityDialog open={isDialogOpen} handleClose={handleDialogClose} />
     </>
   );
 };
