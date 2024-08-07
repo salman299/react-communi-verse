@@ -1,7 +1,7 @@
 // src/redux/appInitialization.js
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchAreas, fetchCities } from './areaCitySlice';
-import { fetchuser} from './userSlice';
+import { fetchUser} from './userSlice';
 // Import other necessary actions or thunks
 
 export const initializeApp = createAsyncThunk('app/initialize', async (_, { dispatch, getState }) => {
@@ -20,6 +20,6 @@ export const initializeApp = createAsyncThunk('app/initialize', async (_, { disp
   }
 
   if (user) {
-    await dispatch(fetchuser());
+    await dispatch(fetchUser());
   }
 });

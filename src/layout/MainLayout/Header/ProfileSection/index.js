@@ -31,13 +31,8 @@ const ProfileSection = () => {
   const navigate = useNavigate();
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [open, setOpen] = useState(false);
-  const {username} = useSelector((state) => state.user.user || "User");
-  const {full_name} = useSelector((state) => state.user.user);
-  const {avatar} = useSelector((state)=> state.user.user || User1)
+  const {user}=useSelector((state) => state.user);
   const anchorRef = useRef(null);
-
-  //console.log(useSelector((state) => state.user))
-
 
   const handleLogout = async () => {
     logout();
@@ -96,7 +91,7 @@ const ProfileSection = () => {
         }}
         icon={
           <Avatar
-            src={avatar}
+            src={user.avatar|| User1}
             sx={{
               ...theme.typography.mediumAvatar,
               margin: '8px 0 8px 8px !important',
@@ -144,10 +139,10 @@ const ProfileSection = () => {
                       <Stack direction="row" spacing={0.5} alignItems="center">
                         <Typography variant="h4">Hello,</Typography>
                         <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                          {username}
+                          {user.full_name || "User"}
                         </Typography>
                       </Stack>
-                      <Typography variant="subtitle2">{full_name|| "Project Admin"}</Typography>
+                      <Typography variant="subtitle2">{user.username|| "Project Admin"}</Typography>
                     </Stack>
                   </Box>
                   <PerfectScrollbar style={{ height: '100%', maxHeight: 'calc(100vh - 250px)', overflowX: 'hidden' }}>

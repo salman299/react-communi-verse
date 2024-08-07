@@ -1,9 +1,8 @@
-// areaCitySlice.js
+// UserSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-// Thunk to fetch cities
-// Thunk to fetch cities
-export const fetchuser = createAsyncThunk('user/fetchuser', async (_, { getState, rejectWithValue }) => {
+//Thunk to fetch user info 
+export const fetchUser = createAsyncThunk('user/fetchuser', async (_, { getState, rejectWithValue }) => {
   try {
     const { accessToken } = getState().auth;
     const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/v1/current-user/`, {
@@ -20,7 +19,6 @@ export const fetchuser = createAsyncThunk('user/fetchuser', async (_, { getState
 const userSlice = createSlice({
   name: 'user',
   initialState: {
-    //areas: [],
     user: {},
     isLoading: false,
     error: null
@@ -28,16 +26,16 @@ const userSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Fetch Cities
-      .addCase(fetchuser.pending, (state) => {
+      // Fetch User
+      .addCase(fetchUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(fetchuser.fulfilled, (state, action) => {
+      .addCase(fetchUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload;
       })
-      .addCase(fetchuser.rejected, (state, action) => {
+      .addCase(fetchUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       });
