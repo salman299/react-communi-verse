@@ -39,7 +39,7 @@ const ManageCommunities = () => {
   const [filterArea, setFilterArea] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { areas } = useSelector((state) => state.areaCity);
-  
+
   const handleDialogOpen = () => {
     setIsDialogOpen(true);
   };
@@ -56,7 +56,8 @@ const ManageCommunities = () => {
           page: page + 1,
           page_size: rowsPerPage,
           search: search,
-          area: filterArea
+          area: filterArea,
+          ordering: '-created_at'
         }
       });
       setCommunities(response.data.results);
@@ -201,7 +202,7 @@ const ManageCommunities = () => {
           </>
         )}
       </Container>
-      <AddCommunityDialog open={isDialogOpen} handleClose={handleDialogClose} />
+      <AddCommunityDialog open={isDialogOpen} onClose={handleDialogClose} fetchCommunities={fetchCommunities} />
     </>
   );
 };

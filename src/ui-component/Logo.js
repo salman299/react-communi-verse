@@ -12,12 +12,7 @@ import logo from 'assets/images/logo-dashboard.svg';
 // ==============================|| LOGO SVG ||============================== //
 
 const Logo = () => {
-
-
-  return (
-    <img src={logo} alt="Community Verse" width="182"/>
-
-  );
+  return <img src={logo} alt="Community Verse" width="182" />;
 };
 
 export default Logo;

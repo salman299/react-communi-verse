@@ -1,29 +1,51 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import {
-  Box,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
   Button,
   TextField,
   MenuItem,
   Select,
   FormControl,
+  FormControlLabel,
   InputLabel,
   Typography,
-  Modal,
-  Divider,
   Grid,
-  Autocomplete
+  Autocomplete,
+  CircularProgress,
+  Divider,
+  Snackbar,
+  Alert,
+  Box,
+  Switch
 } from '@mui/material';
 import { createCommunity } from 'services/Community';
 import { Users } from 'services/Users';
-import FileUploader from './FileUpload';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
+import AvatarUploader from './AvatarUploader';
+import CoverImageUploader from './CoverImageUploader';
 
-const AddCommunityDialog = ({ open, handleClose }) => {
+const AddCommunityDialog = ({ open, onClose, fetchCommunities }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
   const [users, setUsers] = useState([]);
   const { areas } = useSelector((state) => state.areaCity);
+
+  const colorOptions = [
+    { value: '#FF5733', label: 'Red' },
+    { value: '#33FF57', label: 'Green' },
+    { value: '#3357FF', label: 'Blue' },
+    { value: '#F1C40F', label: 'Yellow' },
+    { value: '#9B59B6', label: 'Purple' },
+    { value: '#E67E22', label: 'Orange' },
+    { value: '#2ECC71', label: 'Light Green' }
+  ];
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -46,7 +68,8 @@ const AddCommunityDialog = ({ open, handleClose }) => {
       .matches(/^[a-z-]+$/, 'Slug must contain only lowercase letters and dashes'),
     description: Yup.string().required('Description is required'),
     area: Yup.number().required('Area is required'),
-    owner: Yup.string().required('Owner is required')
+    owner: Yup.string().required('Owner is required'),
+    color: Yup.string().required('Color is required')
   });
 
   const handleSubmit = async (values, { resetForm }) => {
@@ -62,39 +85,38 @@ const AddCommunityDialog = ({ open, handleClose }) => {
       data.append('logo', values.logoImage);
       data.append('cover_image', values.coverImage);
       data.append('owner', values.owner);
+      data.append('color', values.color);
+      data.append('is_published', values.publish);
       const response = await createCommunity(data);
-      console.log('Response:', response);
+
+      if (response.error) {
+        throw new Error(response.error);
+      }
 
       resetForm();
-      handleClose();
+      fetchCommunities();
+      onClose();
     } catch (error) {
-      console.error('Error submitting form:', error);
+      setSnackbarMessage(error.message || 'An error occurred while creating the community');
+      setSnackbarOpen(true);
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
   return (
-    <Modal open={open} onClose={handleClose}>
-      <Box
-        sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: { xs: '90%', sm: '80%', md: '60%', lg: '50%' },
-          maxWidth: 650,
-          maxHeight: '90vh',
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 4,
-          borderRadius: 2,
-          overflowY: 'auto'
-        }}
-      >
-        <Typography variant="h2" component="h2" mb={2}>
-          Add Community
-        </Typography>
+    <>
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+      <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+        <DialogTitle>Add Community</DialogTitle>
         <Divider />
         <Formik
           initialValues={{
@@ -104,140 +126,190 @@ const AddCommunityDialog = ({ open, handleClose }) => {
             communityName: '',
             slug: '',
             description: '',
-            owner: ''
+            owner: '',
+            color: '#FF5733',
+            publish: false
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
           {({ setFieldValue, values, errors, touched }) => (
             <Form>
-              <FileUploader
-                image={values.logoImage}
-                handleUpload={(event) => setFieldValue('logoImage', event.target.files[0])}
-                label="Upload Logo/Image"
-                uploadType="button"
-                buttonText="Upload Logo/Image"
-                avatarSize={80}
-              />
-              <FileUploader
-                image={values.coverImage}
-                handleUpload={(event) => setFieldValue('coverImage', event.target.files[0])}
-                uploadType="cover"
-                buttonText="Select Cover Image"
-              />
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <FormControl fullWidth margin="normal" sx={{ mt: 2 }}>
-                    <InputLabel id="select-area-label">Select Area</InputLabel>
-                    <Select
-                      labelId="select-area-label"
-                      id="select-area"
-                      name="area"
-                      value={values.area}
-                      onChange={(event) => setFieldValue('area', event.target.value)}
-                      label="Select Area"
+              <DialogContent>
+                <Grid container columnSpacing={2} alignItems="center" justifyContent="center">
+                  <Grid item xs={12} justifyContent="flex-end" display="flex">
+                    <FormControlLabel
+                      control={<Switch checked={values.publish} />}
+                      label={values.publish ? 'UNPUBLISH' : 'PUBLISH'}
+                      onChange={(event) => setFieldValue('publish', event.target.checked)}
+                    />
+                  </Grid>
+                  <Grid item xs={8} sm={6}>
+                    <AvatarUploader
+                      imageUrl={values.logoImage ? URL.createObjectURL(values.logoImage) : null}
+                      handleUpload={(event) => setFieldValue('logoImage', event.target.files[0])}
+                    />
+                  </Grid>
+                  <Grid item xs={4} sm={6}>
+                    <FormControl fullWidth margin="normal">
+                      <InputLabel id="select-color-label">Select Color</InputLabel>
+                      <Select
+                        labelId="select-color-label"
+                        id="select-color"
+                        name="color"
+                        value={values.color}
+                        onChange={(event) => setFieldValue('color', event.target.value)}
+                        label="Select Color"
+                        required
+                      >
+                        {colorOptions.map((color) => (
+                          <MenuItem key={color.value} value={color.value}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                              <div
+                                style={{
+                                  width: '20px',
+                                  height: '20px',
+                                  backgroundColor: color.value,
+                                  borderRadius: '4px',
+                                  marginRight: '8px'
+                                }}
+                              />
+                              {color.label}
+                            </div>
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      {touched.color && errors.color && (
+                        <Typography color="error" variant="body2">
+                          {errors.color}
+                        </Typography>
+                      )}
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <CoverImageUploader
+                      imageUrl={values.coverImage ? URL.createObjectURL(values.coverImage) : null}
+                      handleUpload={(event) => setFieldValue('coverImage', event.target.files[0])}
+                      overlayColor={values.color}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth margin="normal">
+                      <InputLabel id="select-area-label">Select Area</InputLabel>
+                      <Select
+                        labelId="select-area-label"
+                        id="select-area"
+                        name="area"
+                        value={values.area}
+                        onChange={(event) => setFieldValue('area', event.target.value)}
+                        label="Select Area"
+                        required
+                      >
+                        {areas.map((area) => (
+                          <MenuItem key={area.id} value={area.id}>
+                            {`${area.name}, ${area.city}`}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      {touched.area && errors.area && (
+                        <Typography color="error" variant="body2">
+                          {errors.area}
+                        </Typography>
+                      )}
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Box>
+                      <Autocomplete
+                        options={users}
+                        getOptionLabel={(user) => user.username}
+                        onChange={(event, newValue) => {
+                          setFieldValue('owner', newValue ? newValue.username : '');
+                        }}
+                        renderInput={(params) => <TextField {...params} label="Owner" variant="outlined" fullWidth required />}
+                      />
+                      {touched.owner && errors.owner && (
+                        <Typography color="error" variant="body2">
+                          {errors.owner}
+                        </Typography>
+                      )}
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Field
+                      as={TextField}
+                      fullWidth
+                      margin="normal"
+                      id="communityName"
+                      name="communityName"
+                      label="Community Name"
+                      variant="outlined"
+                      placeholder="Ismaili Mubarak Scout Group"
                       required
-                      sx={{ height: 50 }}
-                    >
-                      {areas.map((area) => (
-                        <MenuItem key={area.id} value={area.id}>
-                          {`${area.name}, ${area.city}`}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    {touched.area && errors.area && (
+                    />
+                    {touched.communityName && errors.communityName && (
                       <Typography color="error" variant="body2">
-                        {errors.area}
+                        {errors.communityName}
                       </Typography>
                     )}
-                  </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Field
+                      as={TextField}
+                      fullWidth
+                      margin="normal"
+                      id="slug"
+                      name="slug"
+                      label="Slug (Unique Identity)"
+                      variant="outlined"
+                      placeholder="ismaili-mubarak-scout-group"
+                      required
+                      error={Boolean(touched.slug && errors.slug)}
+                      helperText={touched.slug && errors.slug}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Field
+                      as={TextField}
+                      fullWidth
+                      margin="normal"
+                      id="description"
+                      name="description"
+                      label="Description"
+                      variant="outlined"
+                      multiline
+                      minRows={4}
+                      maxRows={8}
+                      required
+                    />
+                    {touched.description && errors.description && (
+                      <Typography color="error" variant="body2">
+                        {errors.description}
+                      </Typography>
+                    )}
+                  </Grid>
                 </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Autocomplete
-                    options={users}
-                    getOptionLabel={(user) => user.username}
-                    onChange={(event, newValue) => {
-                      setFieldValue('owner', newValue ? newValue.username : '');
-                    }}
-                    renderInput={(params) => <TextField {...params} label="Owner" variant="outlined" fullWidth required sx={{ mt: 2 }} />}
-                  />
-                  {touched.owner && errors.owner && (
-                    <Typography color="error" variant="body2">
-                      {errors.owner}
-                    </Typography>
-                  )}
-                </Grid>
-              </Grid>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <Field
-                    as={TextField}
-                    fullWidth
-                    margin="normal"
-                    id="communityName"
-                    name="communityName"
-                    label="Community Name"
-                    variant="outlined"
-                    placeholder="Ismaili Mubarak Scout Group"
-                    required
-                    sx={{ mt: 2 }}
-                  />
-                  {touched.communityName && errors.communityName && (
-                    <Typography color="error" variant="body2">
-                      {errors.communityName}
-                    </Typography>
-                  )}
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Field
-                    as={TextField}
-                    fullWidth
-                    margin="normal"
-                    id="slug"
-                    name="slug"
-                    label="Slug (Unique Identity)"
-                    variant="outlined"
-                    placeholder="ismaili-mubarak-scout-group"
-                    required
-                    error={Boolean(touched.slug && errors.slug)}
-                    helperText={touched.slug && errors.slug}
-                    sx={{ mt: 2 }}
-                  />
-                </Grid>
-              </Grid>
-              <Field
-                as={TextField}
-                fullWidth
-                margin="normal"
-                id="description"
-                name="description"
-                label="Description"
-                variant="outlined"
-                multiline
-                minRows={4}
-                maxRows={8}
-                required
-                sx={{ mt: 2 }}
-              />
-              {touched.description && errors.description && (
-                <Typography color="error" variant="body2">
-                  {errors.description}
-                </Typography>
-              )}
-              <Box display="flex" justifyContent="flex-end" mt={2}>
-                <Button type="button" variant="outlined" onClick={handleClose} sx={{ mr: 2 }}>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={onClose} variant="outlined">
                   Cancel
                 </Button>
-                <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>
-                  {isSubmitting ? 'Adding...' : 'Add Community'}
+                <Button type="submit" variant="contained" disabled={isSubmitting}>
+                  {isSubmitting ? <CircularProgress size={24} /> : 'Add Community'}
                 </Button>
-              </Box>
+              </DialogActions>
             </Form>
           )}
         </Formik>
-      </Box>
-    </Modal>
+      </Dialog>
+    </>
   );
+};
+
+AddCommunityDialog.propTypes = {
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  fetchCommunities: PropTypes.func.isRequired
 };
 
 export default AddCommunityDialog;

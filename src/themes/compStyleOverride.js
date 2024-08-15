@@ -182,6 +182,23 @@ export default function componentStyleOverrides(theme) {
           background: theme.colors?.grey700
         }
       }
+    },
+    MuiDialogTitle: {
+      styleOverrides: {
+        root: {
+          fontSize: '1.2rem', // Change font size for the title
+          fontWeight: 'bold', // Optional: make the title bold
+          padding: '16px 24px' // Customize padding for the title
+        }
+      }
+    },
+    MuiDialogActions: {
+      styleOverrides: {
+        root: {
+          padding: '16px 24px', // Add custom padding for DialogActions
+          justifyContent: 'flex-end' // Align buttons to the right
+        }
+      }
     }
   };
 }
