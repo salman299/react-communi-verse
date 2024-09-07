@@ -20,7 +20,6 @@ const AllCommunities = () => {
       } catch (err) {
         console.error('Error fetching communities:', err);
         setStatus({ communities: [], loading: false, error: 'Failed to fetch communities. Please try again.' });
-        alert("Unable")
       }
     };
     fetchCommunities();

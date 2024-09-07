@@ -2,7 +2,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-//Thunk to fetch user info 
+//Thunk to fetch user info
 export const fetchUser = createAsyncThunk('user/fetchuser', async (_, { getState, rejectWithValue }) => {
   try {
     const { accessToken } = getState().auth;
