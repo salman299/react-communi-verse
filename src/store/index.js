@@ -5,6 +5,7 @@ import storage from 'redux-persist/lib/storage';
 import authReducer from './authSlice';
 import tokenMiddleware from './tokenMiddleware';
 import areaCitySlice from './areaCitySlice';
+import snackbarReducer from './snackbarSlice';
 import { initializeApp } from './appInitialization';
 
 const persistConfig = {
@@ -19,6 +20,7 @@ const store = configureStore({
   reducer: {
     customization: customizationReducer,
     auth: authPersistedReducer,
+    snackbar: snackbarReducer,
     areaCity: areaCitySlice
   },
   middleware: (getDefaultMiddleware) =>

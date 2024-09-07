@@ -10,45 +10,46 @@ import { gridSpacing } from 'store/constant';
 
 const AllCommunities = () => {
   const theme = useTheme();
-  const [communities, setCommunities] = useState([]);
-  const [loading, setLoading] = useState([]);
-  const [error, setError] = useState([]);
+  const [status, setStatus] = useState({ communities: [], loading: true, error: '' });
 
   useEffect(() => {
+    const fetchCommunities = async () => {
+      try {
+        const response = await AuthenticatedAPIClient.get('/api/v1/public/communities/');
+        setStatus({ communities: response.data.results, loading: false, error: '' });
+      } catch (err) {
+        console.error('Error fetching communities:', err);
+        setStatus({ communities: [], loading: false, error: 'Failed to fetch communities. Please try again.' });
+        alert("Unable")
+      }
+    };
     fetchCommunities();
   }, []);
 
-  const fetchCommunities = async () => {
-    try {
-      setLoading(true);
-      const response = await AuthenticatedAPIClient.get('/api/v1/public/communities/');
-      setCommunities(response.data.results);
-      setLoading(false);
-    } catch (err) {
-      console.error('Error fetching communities:', err);
-      setError('Failed to fetch communities. Please try again.');
-      setLoading(false);
-    }
-  };
+  const { communities, loading, error } = status;
 
   return (
     <>
       <Container>
         <SubHeader title="Communities" />
         <Divider sx={{ borderColor: theme.palette.grey[400], mb: gridSpacing }} />
-        {loading && <LinearProgress value={80} />}
-        {!loading && (
+        {loading ? (
+          <LinearProgress value={80} />
+        ) : (
           <Grid container spacing={gridSpacing}>
             {communities.map((community) => (
               <Grid item key={community.slug} xs={12} sm={6} md={4}>
                 <CommunityCard
+                  slug={community.slug}
                   logoUrl={community.logo}
                   imageUrl={community.cover_image ?? image}
                   title={community.name}
                   area={community.area_name}
                   description={community.description}
                   color={community.color ?? '#ffffff'}
-                  is_member={community.is_member}
+                  isMember={community.is_member}
+                  isRequested={community.join_status === 'pending'}
+                  isDenied={community.join_status === 'denied'}
                 />
               </Grid>
             ))}

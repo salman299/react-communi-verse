@@ -199,6 +199,43 @@ export default function componentStyleOverrides(theme) {
           justifyContent: 'flex-end' // Align buttons to the right
         }
       }
+    },
+    MuiTableHead: {
+      styleOverrides: {
+        root: {
+          // Targeting the TableRow inside TableHead for specific styling
+          '& > tr': {
+            '& > th:first-child': {
+              paddingLeft: '24px' // Adjust the padding as needed
+            },
+            '& > th:last-child': {
+              paddingRight: '24px' // Adjust the padding as needed
+            }
+          }
+        }
+      }
+    },
+    MuiTableRow: {
+      styleOverrides: {
+        root: {
+          '& > td:first-child': {
+            paddingLeft: '24px' // Adjust the padding as needed
+          },
+          '& > td:last-child': {
+            paddingRight: '24px' // Adjust the padding as needed
+          }
+        }
+      }
+    },
+    MuiTableBody: {
+      styleOverrides: {
+        root: {
+          // Override styles for TableBody, ensuring hover is applied to its TableRow only
+          '& > tr:hover': {
+            backgroundColor: 'rgba(0, 0, 0, 0.08)' // Hover color for body rows only
+          }
+        }
+      }
     }
   };
 }

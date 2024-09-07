@@ -13,6 +13,7 @@ import { store, persistor } from 'store';
 // style + assets
 import 'assets/scss/style.scss';
 import config from './config';
+import SnackbarComponent from 'ui-component/SnakbarComponent';
 
 // ==============================|| REACT DOM RENDER  ||============================== //
 
@@ -24,6 +25,7 @@ root.render(
       <BrowserRouter basename={config.basename}>
         <App />
       </BrowserRouter>
+      <SnackbarComponent />
     </PersistGate>
   </Provider>
 );

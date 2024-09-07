@@ -21,7 +21,7 @@ const MyCommunities = () => {
   const fetchCommunities = async () => {
     try {
       setLoading(true);
-      const response = await AuthenticatedAPIClient.get('/api/v1/public/communities/');
+      const response = await AuthenticatedAPIClient.get('/api/v1/my-communities/');
       setCommunities(response.data.results);
       setLoading(false);
     } catch (err) {
@@ -42,13 +42,14 @@ const MyCommunities = () => {
             {communities.map((community) => (
               <Grid item key={community.slug} xs={12} sm={6} md={4}>
                 <CommunityCard
+                  slug={community.slug}
                   logoUrl={community.logo}
                   imageUrl={community.cover_image ?? image}
                   title={community.name}
                   area={community.area_name}
                   description={community.description}
                   color={community.color ?? '#ffffff'}
-                  is_member={community.is_member}
+                  isMember={community.is_member}
                 />
               </Grid>
             ))}
