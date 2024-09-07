@@ -38,6 +38,13 @@ const communities = {
           type: 'item',
           url: '/communities/manage-communities',
           breadcrumbs: false
+        },
+        {
+          id: 'manage-join-requests',
+          title: 'Manage Join Requests',
+          type: 'item',
+          url: '/communities/manage-join-requests',
+          breadcrumbs: false
         }
       ]
     }

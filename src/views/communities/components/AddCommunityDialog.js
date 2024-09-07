@@ -22,7 +22,7 @@ import {
   Box,
   Switch
 } from '@mui/material';
-import { createCommunity } from 'services/Community';
+import { createCommunity, updateCommunity } from 'services/Community';
 import { Users } from 'services/Users';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
@@ -30,7 +30,7 @@ import { useSelector } from 'react-redux';
 import AvatarUploader from './AvatarUploader';
 import CoverImageUploader from './CoverImageUploader';
 
-const AddCommunityDialog = ({ open, onClose, fetchCommunities }) => {
+const AddUpdateCommunityDialog = ({ open, onClose, fetchCommunities, communityData }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -68,26 +68,43 @@ const AddCommunityDialog = ({ open, onClose, fetchCommunities }) => {
       .matches(/^[a-z-]+$/, 'Slug must contain only lowercase letters and dashes'),
     description: Yup.string().required('Description is required'),
     area: Yup.number().required('Area is required'),
-    owner: Yup.string().required('Owner is required'),
+    // owner: Yup.string().required('Owner is required'),
     color: Yup.string().required('Color is required')
   });
 
+  const buildFormData = (values) => {
+    const formData = new FormData();
+
+    const appendIfChanged = (field, value) => {
+      if (!communityData || communityData[field] !== value) {
+        formData.append(field, value);
+      }
+    };
+
+    appendIfChanged('slug', values.slug);
+    appendIfChanged('name', values.communityName);
+    appendIfChanged('description', values.description);
+    appendIfChanged('area', values.area);
+    appendIfChanged('color', values.color);
+    appendIfChanged('is_published', values.publish);
+
+    values.logoImage && appendIfChanged('logo', values.logoImage);
+    values.coverImage && appendIfChanged('cover_image', values.coverImage);
+    !communityData && appendIfChanged('owner', values.owner);
+
+    return formData;
+  };
+
   const handleSubmit = async (values, { resetForm }) => {
     setIsSubmitting(true);
+    debugger; // eslint-disable-line no-debugger
 
     try {
-      const data = new FormData();
-      data.append('slug', values.slug);
-      data.append('name', values.communityName);
-      data.append('description', values.description);
-      data.append('area', values.area);
-      data.append('color', 'fff');
-      data.append('logo', values.logoImage);
-      data.append('cover_image', values.coverImage);
-      data.append('owner', values.owner);
-      data.append('color', values.color);
-      data.append('is_published', values.publish);
-      const response = await createCommunity(data);
+      const data = buildFormData(values);
+
+      const response = communityData
+        ? await updateCommunity(communityData.slug, data) // Update community if `communityData` is provided
+        : await createCommunity(data); // Otherwise, create a new one
 
       if (response.error) {
         throw new Error(response.error);
@@ -97,7 +114,7 @@ const AddCommunityDialog = ({ open, onClose, fetchCommunities }) => {
       fetchCommunities();
       onClose();
     } catch (error) {
-      setSnackbarMessage(error.message || 'An error occurred while creating the community');
+      setSnackbarMessage(error.message || 'An error occurred while saving the community');
       setSnackbarOpen(true);
     } finally {
       setIsSubmitting(false);
@@ -116,19 +133,21 @@ const AddCommunityDialog = ({ open, onClose, fetchCommunities }) => {
         </Alert>
       </Snackbar>
       <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-        <DialogTitle>Add Community</DialogTitle>
+        <DialogTitle>{communityData ? 'Edit Community' : 'Add Community'}</DialogTitle>
         <Divider />
         <Formik
           initialValues={{
+            logoImageUrl: communityData?.logo || null,
             logoImage: null,
+            coverImageUrl: communityData?.cover_image || null,
             coverImage: null,
-            area: '',
-            communityName: '',
-            slug: '',
-            description: '',
-            owner: '',
-            color: '#FF5733',
-            publish: false
+            area: communityData?.area || '',
+            communityName: communityData?.name || '',
+            slug: communityData?.slug || '',
+            description: communityData?.description || '',
+            owner: communityData?.owner || '',
+            color: communityData?.color || '#FF5733',
+            publish: communityData?.is_published || false
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
@@ -146,8 +165,11 @@ const AddCommunityDialog = ({ open, onClose, fetchCommunities }) => {
                   </Grid>
                   <Grid item xs={8} sm={6}>
                     <AvatarUploader
-                      imageUrl={values.logoImage ? URL.createObjectURL(values.logoImage) : null}
-                      handleUpload={(event) => setFieldValue('logoImage', event.target.files[0])}
+                      imageUrl={values.logoImageUrl}
+                      handleUpload={(event) => {
+                        setFieldValue('logoImageUrl', URL.createObjectURL(event.target.files[0]));
+                        setFieldValue('logoImage', event.target.files[0]);
+                      }}
                     />
                   </Grid>
                   <Grid item xs={4} sm={6}>
@@ -160,6 +182,7 @@ const AddCommunityDialog = ({ open, onClose, fetchCommunities }) => {
                         value={values.color}
                         onChange={(event) => setFieldValue('color', event.target.value)}
                         label="Select Color"
+                        size="small"
                         required
                       >
                         {colorOptions.map((color) => (
@@ -188,8 +211,11 @@ const AddCommunityDialog = ({ open, onClose, fetchCommunities }) => {
                   </Grid>
                   <Grid item xs={12}>
                     <CoverImageUploader
-                      imageUrl={values.coverImage ? URL.createObjectURL(values.coverImage) : null}
-                      handleUpload={(event) => setFieldValue('coverImage', event.target.files[0])}
+                      imageUrl={values.coverImageUrl}
+                      handleUpload={(event) => {
+                        setFieldValue('coverImageUrl', URL.createObjectURL(event.target.files[0]));
+                        setFieldValue('coverImage', event.target.files[0]);
+                      }}
                       overlayColor={values.color}
                     />
                   </Grid>
@@ -226,7 +252,9 @@ const AddCommunityDialog = ({ open, onClose, fetchCommunities }) => {
                         onChange={(event, newValue) => {
                           setFieldValue('owner', newValue ? newValue.username : '');
                         }}
+                        value={users.find((user) => user.username === values.owner) || null}
                         renderInput={(params) => <TextField {...params} label="Owner" variant="outlined" fullWidth required />}
+                        disabled={communityData ? true : false}
                       />
                       {touched.owner && errors.owner && (
                         <Typography color="error" variant="body2">
@@ -295,7 +323,7 @@ const AddCommunityDialog = ({ open, onClose, fetchCommunities }) => {
                   Cancel
                 </Button>
                 <Button type="submit" variant="contained" disabled={isSubmitting}>
-                  {isSubmitting ? <CircularProgress size={24} /> : 'Add Community'}
+                  {isSubmitting ? <CircularProgress size={24} /> : communityData ? 'Update Community' : 'Add Community'}
                 </Button>
               </DialogActions>
             </Form>
@@ -306,10 +334,11 @@ const AddCommunityDialog = ({ open, onClose, fetchCommunities }) => {
   );
 };
 
-AddCommunityDialog.propTypes = {
+AddUpdateCommunityDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  fetchCommunities: PropTypes.func.isRequired
+  fetchCommunities: PropTypes.func.isRequired,
+  communityData: PropTypes.object
 };
 
-export default AddCommunityDialog;
+export default AddUpdateCommunityDialog;
