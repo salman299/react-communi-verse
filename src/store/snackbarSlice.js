@@ -5,7 +5,7 @@ const snackbarSlice = createSlice({
   initialState: {
     open: false,
     message: '',
-    severity: 'info', // Could be 'success', 'error', 'warning', 'info'
+    severity: 'info' // Could be 'success', 'error', 'warning', 'info'
   },
   reducers: {
     showSnackbar: (state, action) => {
@@ -15,8 +15,8 @@ const snackbarSlice = createSlice({
     },
     hideSnackbar: (state) => {
       state.open = false;
-    },
-  },
+    }
+  }
 });
 
 export const { showSnackbar, hideSnackbar } = snackbarSlice.actions;

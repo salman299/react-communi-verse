@@ -1,18 +1,9 @@
-// src/redux/appInitialization.js
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchAreas, fetchCities } from './areaCitySlice';
-// Import other necessary actions or thunks
+import { fetchUser } from './userSlice';
 
-export const initializeApp = createAsyncThunk('app/initialize', async (_, { dispatch, getState }) => {
-  // Check if user is authenticated
-  const { isAuthenticated } = getState().auth;
-  const { areas } = getState().areaCity;
-
-  if (isAuthenticated) {
-    // Add events for the Authenticated User
-  }
-  if (areas) {
-    await dispatch(fetchAreas());
-    await dispatch(fetchCities());
-  }
+export const initializeApp = createAsyncThunk('app/initialize', async (_, { dispatch }) => {
+  await dispatch(fetchAreas());
+  await dispatch(fetchCities());
+  await dispatch(fetchUser());
 });
