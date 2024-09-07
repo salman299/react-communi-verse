@@ -8,7 +8,6 @@ import {
   Box,
   Chip,
   ClickAwayListener,
-  //Grid,
   List,
   ListItemButton,
   ListItemIcon,
@@ -31,7 +30,7 @@ const ProfileSection = () => {
   const navigate = useNavigate();
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [open, setOpen] = useState(false);
-  const {user}=useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.user);
   const anchorRef = useRef(null);
 
   const handleLogout = async () => {
@@ -91,7 +90,7 @@ const ProfileSection = () => {
         }}
         icon={
           <Avatar
-            src={user.avatar|| User1}
+            src={user.avatar || User1}
             sx={{
               ...theme.typography.mediumAvatar,
               margin: '8px 0 8px 8px !important',
@@ -139,10 +138,10 @@ const ProfileSection = () => {
                       <Stack direction="row" spacing={0.5} alignItems="center">
                         <Typography variant="h4">Hello,</Typography>
                         <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                          {user.full_name || "User"}
+                          {user.full_name}
                         </Typography>
                       </Stack>
-                      <Typography variant="subtitle2">{user.username|| "Project Admin"}</Typography>
+                      <Typography variant="subtitle2">{user.username}</Typography>
                     </Stack>
                   </Box>
                   <PerfectScrollbar style={{ height: '100%', maxHeight: 'calc(100vh - 250px)', overflowX: 'hidden' }}>

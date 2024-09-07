@@ -97,7 +97,6 @@ const AddUpdateCommunityDialog = ({ open, onClose, fetchCommunities, communityDa
 
   const handleSubmit = async (values, { resetForm }) => {
     setIsSubmitting(true);
-    debugger; // eslint-disable-line no-debugger
 
     try {
       const data = buildFormData(values);

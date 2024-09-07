@@ -22,7 +22,7 @@ const store = configureStore({
     customization: customizationReducer,
     auth: authPersistedReducer,
     snackbar: snackbarReducer,
-    areaCity: areaCitySlice
+    areaCity: areaCitySlice,
     user: userSlice
   },
   middleware: (getDefaultMiddleware) =>

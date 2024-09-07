@@ -34,7 +34,7 @@ const AuthLogin = ({ ...others }) => {
   const theme = useTheme();
   const scriptedRef = useScriptRef();
   const [checked, setChecked] = useState(true);
-  const { login } = useAuth();
+  const { login, fetchUser } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => {
@@ -61,6 +61,7 @@ const AuthLogin = ({ ...others }) => {
         setSubmitting(false);
       } else {
         // Handle successful login
+        await fetchUser();
         setStatus({ success: true });
         setSubmitting(false);
       }
